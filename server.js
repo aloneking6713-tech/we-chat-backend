@@ -344,8 +344,3 @@ server.listen(PORT, "0.0.0.0", () => {
     console.log("We Chat server running on port " + PORT);
 });
 
-    console.log(
-        "We Chat server running on port 3000"
-    );
-
-});
