@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "aloneking6713@gmail.com",
+      "password": "$2b$10$FWfuyKFCFLztTPT2SMY.C.uQfWVvCkp6HXLJnPtCkxLReOd48f.GS",
+      "created_at": "2026-09-09T05:59:16.164Z"
+    },
+    {
+      "id": 2,
+      "email": "ahirangoluk@gmail.com",
+      "password": "$2b$10$ceAmdOgUZKBKs81Bx9lDueJXE.tKWtVv/1snbh2/aCaj2GGvJm8Dy",
+      "created_at": "2026-09-09T06:00:44.575Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "room": "room1",
+      "user_id": 1,
+      "text": "Hy",
+      "created_at": "2026-09-09T05:59:22.575Z"
+    }
+  ]
+}

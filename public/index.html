@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WE CHAT</title>
+  <script src="/socket.io/socket.io.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+    }
+
+    .box {
+      max-width: 420px;
+      margin: auto;
+      min-height: 100vh;
+      background: white;
+    }
+
+    .login {
+      padding: 40px 25px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2563eb;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    button {
+      background: #2563eb;
+      color: white;
+      border: none;
+      font-weight: bold;
+    }
+
+    #chat {
+      display: none;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .header {
+      background: #2563eb;
+      color: white;
+      padding: 18px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+    }
+
+    .message {
+      background: #e8f0ff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      word-wrap: break-word;
+    }
+
+    .time {
+      display: block;
+      font-size: 11px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .send {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      gap: 8px;
+    }
+
+    .send input {
+      margin: 0;
+      flex: 1;
+    }
+
+    .send button {
+      width: 80px;
+      margin: 0;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <div id="login" class="login">
+    <h1>ChatNow</h1>
+
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="loginUser()">Login</button>
+    <button onclick="registerUser()">Create Account</button>
+
+    <div id="error" class="error"></div>
+  </div>
+
+  <div id="chat">
+    <div class="header">
+      ChatNow
+    </div>
+
+    <div id="messages"></div>
+
+    <div class="send">
+      <input id="messageInput" placeholder="Message likho...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+let token = "";
+let socket;
+
+async function registerUser() {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) {
+    showError("Email aur password bharo");
+    return;
+  }
+
+  try {
+
+    const response = await fetch("/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showError(data.error);
+      return;
+    }
+
+    token = data.token;
+    openChat();
+
+  } catch (error) {
+    showError("Server se connection nahi hua");
+  }
+}
+
+
+async function loginUser() {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) {
+    showError("Email aur password bharo");
+    return;
+  }
+
+  try {
+
+    const response = await fetch("/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showError(data.error);
+      return;
+    }
+
+    token = data.token;
+    openChat();
+
+  } catch (error) {
+    showError("Server se connection nahi hua");
+  }
+}
+
+
+function openChat() {
+
+  document.getElementById("login").style.display = "none";
+  document.getElementById("chat").style.display = "flex";
+
+  socket = io();
+
+  socket.on("connect", () => {
+
+    socket.emit("joinRoom", {
+      token: token,
+      room: "room1"
+    });
+
+  });
+
+
+  socket.on("oldMessages", (messages) => {
+
+    messages.forEach(message => {
+      showMessage(message);
+    });
+
+  });
+
+
+  socket.on("receiveMessage", (message) => {
+
+    showMessage(message);
+
+  });
+
+
+  socket.on("authError", (message) => {
+
+    alert(message);
+
+  });
+
+}
+
+
+function sendMessage() {
+
+  const input = document.getElementById("messageInput");
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  socket.emit("sendMessage", text);
+
+  input.value = "";
+
+}
+
+
+function showMessage(message) {
+
+  const messages = document.getElementById("messages");
+
+  const div = document.createElement("div");
+  div.className = "message";
+
+  div.textContent = message.text;
+
+  const time = document.createElement("span");
+  time.className = "time";
+
+  time.textContent =
+    new Date(message.created_at).toLocaleString();
+
+  div.appendChild(time);
+
+  messages.appendChild(div);
+
+  messages.scrollTop = messages.scrollHeight;
+
+}
+
+
+function showError(message) {
+
+  document.getElementById("error").textContent = message;
+
+}
+
+</script>
+
+</body>
+</html>
