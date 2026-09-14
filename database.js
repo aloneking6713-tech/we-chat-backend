@@ -120,12 +120,14 @@ function searchUsers(query, currentUserId) {
             u.id !== currentUserId &&
             (
                 String(u.id) === query ||
-                u.name.toLowerCase().includes(query)
+                String(u.username || "").toLowerCase().includes(query) ||
+                String(u.name || "").toLowerCase().includes(query)
             )
         )
         .map(u => ({
             id: u.id,
-            name: u.name
+            username: u.username || "",
+            name: u.name || ""
         }));
 }
 
