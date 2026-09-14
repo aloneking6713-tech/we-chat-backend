@@ -279,40 +279,46 @@ io.on("connection", (socket) => {
         socket.id
     );
 
-    socket.on("joinRoom", (data) => {
+     socket.on("joinRoom", (data) => {
 
-        try {
+    try {
 
-            const user =
-                verify(data.token);
+        const user = verify(data.token);
 
-            if (!data.room) {
-                return;
-            }
+        const targetId =
+            Number(data.targetId);
 
-            socket.userId = user.id;
-            socket.name = user.name;
-            socket.room = data.room;
-
-            socket.join(data.room);
-
-            const messages =
-                db.getMessages(data.room);
-
-            socket.emit(
-                "oldMessages",
-                messages
-            );
-
-        } catch {
-
-            socket.emit(
-                "authError",
-                "Login expired"
-            );
+        if (!targetId) {
+            return;
         }
-    });
 
+        const room =
+            [user.id, targetId]
+                .sort((a, b) => a - b)
+                .join("_");
+
+        socket.userId = user.id;
+        socket.name = user.name;
+        socket.room = room;
+
+        socket.join(room);
+
+        const messages =
+            db.getMessages(room);
+
+        socket.emit(
+            "oldMessages",
+            messages
+        );
+
+    } catch (e) {
+
+        socket.emit(
+            "authError",
+            "Login expired"
+        );
+    }
+});
 
     socket.on("sendMessage", (text) => {
 
