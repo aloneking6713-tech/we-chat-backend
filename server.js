@@ -17,7 +17,25 @@ const io = new Server(server);
 
 app.use(express.json());
 app.use(express.static("public"));
+app.get("/search-users", (req, res) => {
+    try {
+        const token = req.headers.authorization?.replace("Bearer ", "");
+        const user = verify(token);
+        const query = req.query.q;
 
+        if (!query) {
+            return res.json([]);
+        }
+
+        const users = db.searchUsers(query, user.id);
+        res.json(users);
+
+    } catch (error) {
+        res.status(401).json({
+            error: "Login expired"
+        });
+    }
+});
 
 // ================= REGISTER =================
 

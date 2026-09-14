@@ -105,6 +105,24 @@ function getMessages(room) {
         m => m.room === room
     );
 }
+function searchUsers(query, currentUserId) {
+    const data = load();
+
+    query = query.trim().toLowerCase();
+
+    return data.users
+        .filter(u =>
+            u.id !== currentUserId &&
+            (
+                String(u.id) === query ||
+                u.name.toLowerCase().includes(query)
+            )
+        )
+        .map(u => ({
+            id: u.id,
+            name: u.name
+        }));
+}
 
 module.exports = {
     addUser,
@@ -113,5 +131,6 @@ module.exports = {
     findByPhone,
     updatePassword,
     addMessage,
-    getMessages
+    getMessages,
+    searchUsers	
 };
