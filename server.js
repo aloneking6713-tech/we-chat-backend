@@ -43,14 +43,16 @@ app.post("/register", (req, res) => {
 
     try {
 
-        const {
-            name,
-            phone,
-            email,
-            password
-        } = req.body;
+         const {
+    username,
+    name,
+    phone,
+    email,
+    password
+} = req.body;
 
-        if (!name || !phone || !email || !password) {
+
+           if (!username || !name || !phone || !email || !password) {
             return res.status(400).json({
                 error: "Sabhi details enter karo"
             });
@@ -63,12 +65,12 @@ app.post("/register", (req, res) => {
         }
 
         const token = register(
-            name.trim(),
-            phone.trim(),
-            email.trim().toLowerCase(),
-            password
-        );
-
+    username.trim().toLowerCase(),
+    name.trim(),
+    phone.trim(),
+    email.trim().toLowerCase(),
+    password
+);
         res.json({
             success: true,
             token

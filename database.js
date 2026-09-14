@@ -24,13 +24,18 @@ function save(data) {
     );
 }
 
-function addUser(name, phone, email, password) {
+function addUser(username, name, phone, email, password) {
     const data = load();
+
+    if (data.users.some(u => u.username === username)) {
+        throw new Error("Username already taken");
+    }
 
     const id = data.users.length + 1;
 
     data.users.push({
         id,
+        username,
         name,
         phone,
         email,
@@ -40,7 +45,7 @@ function addUser(name, phone, email, password) {
 
     save(data);
     return id;
-}
+}	
 
 function findByAccount(account) {
     const data = load();

@@ -6,7 +6,7 @@ const SECRET =
     process.env.JWT_SECRET ||
     "CHANGE_THIS_SECRET_LATER";
 
-function register(name, phone, email, password) {
+function register(username, name, phone, email, password) {
 
     if (db.findByPhone(phone)) {
         throw new Error("Phone already registered");
@@ -19,12 +19,13 @@ function register(name, phone, email, password) {
     const hash =
         bcrypt.hashSync(password, 10);
 
-    const id = db.addUser(
-        name,
-        phone,
-        email,
-        hash
-    );
+   const id = db.addUser(
+    username,
+    name,
+    phone,
+    email,
+    hash
+);
 
     return jwt.sign(
         {
