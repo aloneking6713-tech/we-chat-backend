@@ -113,21 +113,44 @@ function getMessages(room) {
 function searchUsers(query, currentUserId) {
     const data = load();
 
-    query = query.trim().toLowerCase();
+    const search = String(query || "")
+        .trim()
+        .toLowerCase();
+
+    if (!search) {
+        return [];
+    }
 
     return data.users
-        .filter(u =>
-            u.id !== currentUserId &&
-            (
-                String(u.id) === query ||
-                String(u.username || "").toLowerCase().includes(query) ||
-                String(u.name || "").toLowerCase().includes(query)
-            )
-        )
+        .filter(u => {
+            if (Number(u.id) === Number(currentUserId)) {
+                return false;
+            }
+
+            const username =
+                String(u.username || "")
+                    .trim()
+                    .toLowerCase();
+
+            const name =
+                String(u.name || "")
+                    .trim()
+                    .toLowerCase();
+
+            const id =
+                String(u.id || "").trim();
+
+            return (
+                username === search ||
+                username.includes(search) ||
+                name.includes(search) ||
+                id === search
+            );
+        })
         .map(u => ({
-            id: u.id,
-            username: u.username || "",
-            name: u.name || ""
+            id: Number(u.id),
+            username: String(u.username || ""),
+            name: String(u.name || "")
         }));
 }
 
