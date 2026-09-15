@@ -17,6 +17,9 @@ const io = new Server(server);
 
 app.use(express.json());
 app.use(express.static("public"));
+app.get("/download/", (req, res) => {
+    res.sendFile(__dirname + "/public/download/index.html");
+});
 app.get("/search-users", (req, res) => {
     try {
         const token = req.headers.authorization?.replace("Bearer ", "");
