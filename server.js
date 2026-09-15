@@ -343,10 +343,11 @@ io.on("connection", (socket) => {
                 text.trim()
             );
 
-        io.to(socket.room).emit(
-            "receiveMessage",
-            message
-        );
+     socket.broadcast.to(socket.room).emit(
+    "receiveMessage",
+    message
+);
+
     });
 
 
