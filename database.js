@@ -127,23 +127,24 @@ function searchUsers(query, currentUserId) {
                 return false;
             }
 
-            const username =
-                String(u.username || "")
-                    .trim()
-                    .toLowerCase();
+            const username = String(u.username || "")
+                .trim()
+                .toLowerCase();
 
-            const name =
-                String(u.name || "")
-                    .trim()
-                    .toLowerCase();
+            const name = String(u.name || "")
+                .trim()
+                .toLowerCase();
 
-            const id =
-                String(u.id || "").trim();
+            const email = String(u.email || "")
+                .trim()
+                .toLowerCase();
+
+            const id = String(u.id || "").trim();
 
             return (
-                username === search ||
                 username.includes(search) ||
                 name.includes(search) ||
+                email.includes(search) ||
                 id === search
             );
         })
@@ -153,7 +154,6 @@ function searchUsers(query, currentUserId) {
             name: String(u.name || "")
         }));
 }
-
 module.exports = {
     addUser,
     findByAccount,
