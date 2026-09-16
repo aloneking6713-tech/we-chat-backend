@@ -64,13 +64,15 @@ function login(account, password) {
         );
     }
 
-    return jwt.sign(
-        {
-            id: user.id,
-            name: user.name,
-            phone: user.phone,
-            email: user.email
-        },
+       return jwt.sign(
+    {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        phone: user.phone,
+        email: user.email
+    },
+
         SECRET,
         {
             expiresIn: "7d"
