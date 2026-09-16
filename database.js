@@ -86,7 +86,7 @@ function updatePassword(userId, password) {
     return true;
 }
 
-function addMessage(room, userId, text) {
+function addMessage(room, userId, text, type = "text") {
     const data = load();
 
     const message = {
@@ -94,6 +94,7 @@ function addMessage(room, userId, text) {
         room,
         user_id: userId,
         text,
+        type,
         created_at: new Date().toISOString()
     };
 
