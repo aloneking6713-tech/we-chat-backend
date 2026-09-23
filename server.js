@@ -15,7 +15,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
+
 app.use(express.static("public"));
 app.get("/download/", (req, res) => {
     res.sendFile(__dirname + "/public/download/index.html");
@@ -323,48 +324,62 @@ io.on("connection", (socket) => {
     }
 });
 
-    socket.on("sendMessage", (text) => {
+socket.on("sendMessage", (text) => {
 
-        if (
-            !socket.userId ||
-            !socket.room
-        ) {
-            return;
-        }
+    if (
+        !socket.userId ||
+        !socket.room
+    ) {
+        return;
+    }
 
-        if (
-            !text ||
-            !text.trim()
-        ) {
-            return;
-        }
+    if (
+        !text ||
+        !text.trim()
+    ) {
+        return;
+    }
 
-        const message =
-            db.addMessage(
-                socket.room,
-                socket.userId,
-                text.trim()
-            );
-
-     socket.broadcast.to(socket.room).emit(
-    "receiveMessage",
-    message
-);
-
-    });
-
-
-    socket.on("disconnect", () => {
-
-        console.log(
-            "User disconnected:",
-            socket.id
+    const message =
+        db.addMessage(
+            socket.room,
+            socket.userId,
+            text.trim()
         );
 
-    });
+    socket.broadcast.to(socket.room).emit(
+        "receiveMessage",
+        message
+    );
 
 });
+// ================= PHOTO MESSAGE =================
 
+socket.on("sendPhoto", (photo) => {
+
+    if (!socket.userId || !socket.room) {
+        return;
+    }
+
+    if (!photo || !photo.trim()) {
+        return;
+    }
+
+    const message = db.addMessage(
+        socket.room,
+        socket.userId,
+        photo.trim(),
+        "image"
+    );
+
+    socket.broadcast.to(
+        socket.room
+    ).emit(
+        "receiveMessage",
+        message
+    );
+});
+});
 
 // ================= SERVER =================
 

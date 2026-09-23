@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const file = "chat-data.json";
+const file = __dirname + "/chat-data.json";
 
 if (!fs.existsSync(file)) {
     fs.writeFileSync(
