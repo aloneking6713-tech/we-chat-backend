@@ -357,10 +357,10 @@ console.log(
     socket.room
 );
 
-io.to(socket.room).emit(
-        "receiveMessage",
-        message
-    );
+socket.broadcast.to(socket.room).emit(
+    "receiveMessage",
+    message
+);
 
 });
 // ================= PHOTO MESSAGE =================
