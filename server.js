@@ -306,6 +306,11 @@ io.on("connection", (socket) => {
         socket.room = room;
 
         socket.join(room);
+console.log(
+    "ROOM JOIN:",
+    socket.userId,
+    room
+);
 
         const messages =
             db.getMessages(room);
@@ -346,6 +351,11 @@ socket.on("sendMessage", (text) => {
             socket.userId,
             text.trim()
         );
+console.log(
+    "SEND:",
+    socket.userId,
+    socket.room
+);
 
     socket.broadcast.to(socket.room).emit(
         "receiveMessage",
