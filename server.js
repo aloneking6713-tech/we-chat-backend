@@ -357,7 +357,7 @@ console.log(
     socket.room
 );
 
-    socket.broadcast.to(socket.room).emit(
+io.to(socket.room).emit(
         "receiveMessage",
         message
     );
