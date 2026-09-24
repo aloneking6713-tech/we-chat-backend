@@ -13,10 +13,11 @@ const {
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    maxHttpBufferSize: 100 * 1024 * 1024
+});
 
-app.use(express.json({ limit: "10mb" }));
-
+app.use(express.json({ limit: "100mb" }));
 app.use(express.static("public"));
 app.get("/download/", (req, res) => {
     res.sendFile(__dirname + "/public/download/index.html");
